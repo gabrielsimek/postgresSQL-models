@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS motorcyles;
+
+CREATE TABLE motorcyles (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  make TEXT,
+  model TEXT,
+  horsepower INTEGER NOT NULL
+)
