@@ -1,8 +1,17 @@
 DROP TABLE IF EXISTS motorcycles;
+DROP TABLE IF EXISTS pokemon;
 
 CREATE TABLE motorcycles (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   make TEXT,
   model TEXT,
   horsepower INTEGER NOT NULL
+);
+
+CREATE TABLE pokemon (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT,
+  type_1 TEXT,
+  type_2 TEXT,
+  attack INTEGER NOT NULL
 )

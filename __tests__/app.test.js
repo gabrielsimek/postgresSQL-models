@@ -3,8 +3,8 @@ import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
 import Motorcycle from '../lib/models/Motorcycle';
-
-describe('demo routes', () => {
+import Pokemon from '../lib/models/Pokemon';
+describe('/api/v1/motorcycles', () => {
   beforeEach(() => {
     return setup(pool);
   });
@@ -54,12 +54,43 @@ describe('demo routes', () => {
   it('deletes a motorcycle from the db', async () => {
     const ninja = await  Motorcycle.insert({ make: 'Kawasaki', model: 'Ninja-650', horsepower: 67 });
     await  Motorcycle.insert({ make: 'Honda', model: 'CBR-650R', horsepower: 90 });
-    
+
     const res = await request(app)
       .delete(`/api/v1/motorcycles/${ninja.id}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(ninja);
     expect(res.body).not.toEqual(expect.arrayContaining([ninja]));
+  });
+});
+
+describe('/api/v1/pokemon,', () => {
+  beforeEach(() => {
+    return setup(pool);
+  });
+
+  it('inserts a pokemon in to /api/v1/pokemon', async () => {
+    const pokemon = {
+      id: '1',
+      name: 'pikachu',
+      typeOne: 'electric',
+      typeTwo: 'NA',
+      attack: 55
+    };
+    const res = await request(app)
+      .post('/api/v1/pokemon')
+      .send(pokemon);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(pokemon);
+  });
+  it('gets a pokemon from /api/v1/pokemon', async () => {
+    const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
+    
+    const res = await request(app)
+      .get(`/api/v1/pokemon/${pokemon.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(pokemon);
   });
 });
