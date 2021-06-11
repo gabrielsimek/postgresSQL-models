@@ -21,7 +21,7 @@ describe('/api/v1/motorcycles', () => {
     const motorcycle = await Motorcycle.insert({ make: 'Kawasaki', model: 'Ninja-650', horsepower: 67 });
     
     const res = await request(app)
-      .get(`/api/v1/motorcycles${motorcycle.id}`);
+      .get(`/api/v1/motorcycles/${motorcycle.id}`);
       
     expect(res.status).toBe(200);
     expect(res.body).toEqual(motorcycle);
@@ -45,7 +45,7 @@ describe('/api/v1/motorcycles', () => {
     
 
     const res = await request(app)
-      .put(`/api/v1/motorcycles${cbr.id}`)
+      .put(`/api/v1/motorcycles/${cbr.id}`)
       .send(cbr);
     
     expect(res.status).toBe(200);
@@ -85,7 +85,7 @@ describe('/api/v1/pokemon,', () => {
     expect(res.body).toEqual(pokemon);
   });
 
-  it('gets a pokemon from /api/v1/pokemon:id', async () => {
+  it('gets a pokemon from /api/v1/pokemon/:id', async () => {
     const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
     
     const res = await request(app)
@@ -99,6 +99,7 @@ describe('/api/v1/pokemon,', () => {
     const pika = { name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 };
     const char = { name: 'charmeleon', typeOne: 'fire', typeTwo: 'NA', attack: 64 };
     const bulba = { name: 'bulbasaur', typeOne: 'grass', typeTwo: 'poison', attack: 49 };
+    
     const pokemon = [pika, char, bulba];
     const expected = await Promise.all(
       pokemon.map(poke => {
@@ -116,7 +117,6 @@ describe('/api/v1/pokemon,', () => {
     const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
     pokemon.attack = 5000;
     pokemon.typeTwo = 'dragon';
-    console.log(pokemon);
     const res = await request(app)
       .put(`/api/v1/pokemon/${pokemon.id}`)
       .send(pokemon);
@@ -135,4 +135,47 @@ describe('/api/v1/pokemon,', () => {
     expect(res.body).toEqual(char);
     expect(res.body).not.toEqual(expect.arrayContaining([char]));
   });
+});
+
+describe('/api/v1/something', () => {
+  beforeEach(() => {
+    return setup(pool);
+  });
+
+  const cats = [{
+    name: 'Felix',
+    type: 'Tuxedo',
+    lives: 3,
+    isSidekick: false
+  },
+  {
+    name: 'Garfield',
+    type: 'Orange Tabby',
+    lives: 7,
+    isSidekick: false
+  },
+  {
+    name: 'Duchess',
+    type: 'Angora',
+    lives: 9,
+    isSidekick: false
+  },
+  {
+    name: 'Stimpy',
+    type: 'Manx',
+    lives: 1,
+    isSidekick: true
+  }];
+  it('inserts a cat into /api/v1/cats', async () => {
+    const felix = cats[0];
+
+    const res = await request(app)
+      .post('/api/v1/cats')
+      .send(felix);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ id: '1', ...felix });
+      
+  });
+
 });
