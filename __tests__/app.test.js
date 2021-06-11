@@ -39,4 +39,16 @@ describe('demo routes', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual([ninja, cbr, sv]);
   });
+  it('updates a motorcycle in the db', async () => {
+    const cbr = await  Motorcycle.insert({ make: 'Honda', model: 'CBR-650R', horsepower: 90 });
+    cbr.horsepower = 1000;
+    
+
+    const res = await request(app)
+      .put(`/api/v1/motorcycles${cbr.id}`)
+      .send(cbr);
+    
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(cbr);
+  });
 });
