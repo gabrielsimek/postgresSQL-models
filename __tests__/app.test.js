@@ -4,6 +4,7 @@ import request from 'supertest';
 import app from '../lib/app.js';
 import Motorcycle from '../lib/models/Motorcycle';
 import Pokemon from '../lib/models/Pokemon';
+import Cat from '../lib/models/Cat';
 describe('/api/v1/motorcycles', () => {
   beforeEach(() => {
     return setup(pool);
@@ -105,14 +106,14 @@ describe('/api/v1/pokemon,', () => {
       pokemon.map(poke => {
         return  Pokemon.insert(poke);
       }));
-
+    console.log(expected);
     const res = await request(app)
       .get('/api/v1/pokemon');
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual(expected);
+    expect(res.body).toEqual(expect.arrayContaining(expected));
   });
-  //!!!finish update
+
   it('updates a pokemon at /api/v1/pokemon/:id', async () => {
     const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
     pokemon.attack = 5000;
@@ -137,7 +138,7 @@ describe('/api/v1/pokemon,', () => {
   });
 });
 
-describe('/api/v1/something', () => {
+describe('/api/v1/pokemon', () => {
   beforeEach(() => {
     return setup(pool);
   });
@@ -177,5 +178,40 @@ describe('/api/v1/something', () => {
     expect(res.body).toEqual({ id: '1', ...felix });
       
   });
+  it('gets a cat from /api/v1/cats:id', async () => {
+    const cat = await Cat.insert(cats[0]);
+    
+    const res = await request(app)
+      .get(`/api/v1/cats/${cat.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(cat);
+  });
+  it('gets all cats from /api/v1/cats', async () => {
+    const allCats = await Promise.all(
+      cats.map(cat => Cat.insert(cat))
+    );
+    console.log(cats);
+    const res = await request(app)
+      .get('/api/v1/cats/');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(expect.arrayContaining(allCats));
+  });
+  it('updates a cat in /api/v1/cats:id', async () => {
+    const cat = await Cat.insert(cats[0]);
+      
+    cat.isSidekick = false;
+    cat.lives = 25;
+  
+    const res = await request(app)
+      .put(`/api/v1/cats/${cat.id}`)
+      .send(cat);
+  
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(cat);
+  });
 
 });
+
+
