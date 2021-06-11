@@ -51,4 +51,15 @@ describe('demo routes', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cbr);
   });
+  it('deletes a motorcycle from the db', async () => {
+    const ninja = await  Motorcycle.insert({ make: 'Kawasaki', model: 'Ninja-650', horsepower: 67 });
+    await  Motorcycle.insert({ make: 'Honda', model: 'CBR-650R', horsepower: 90 });
+    
+    const res = await request(app)
+      .delete(`/api/v1/motorcycles/${ninja.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(ninja);
+    expect(res.body).not.toEqual(expect.arrayContaining([ninja]));
+  });
 });
