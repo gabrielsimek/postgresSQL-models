@@ -84,7 +84,8 @@ describe('/api/v1/pokemon,', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(pokemon);
   });
-  it('gets a pokemon from /api/v1/pokemon', async () => {
+
+  it('gets a pokemon from /api/v1/pokemon:id', async () => {
     const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
     
     const res = await request(app)
@@ -92,5 +93,28 @@ describe('/api/v1/pokemon,', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(pokemon);
+  });
+
+  it('gets all pokemon from /api/v1/pokemon', async () => {
+    const pika = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
+    const char = await Pokemon.insert({ name: 'charmeleon', typeOne: 'fire', typeTwo: 'NA', attack: 64 });
+    const bulba = await Pokemon.insert({ name: 'bulbasaur', typeOne: 'grass', typeTwo: 'poison', attack: 49 });
+
+    const res = await request(app)
+      .get('/api/v1/pokemon');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([pika, char, bulba]);
+  });
+  it('gets a removes a pokemon from /api/v1/pokemon:id', async () => {
+    const char = await Pokemon.insert({ name: 'charmeleon', typeOne: 'fire', typeTwo: 'NA', attack: 64 });
+    await Pokemon.insert({ name: 'bulbasaur', typeOne: 'grass', typeTwo: 'poison', attack: 49 });
+    
+    const res = await request(app)
+      .delete(`/api/v1/pokemon/${char.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(char);
+    expect(res.body).not.toEqual(expect.arrayContaining([char]));
   });
 });
