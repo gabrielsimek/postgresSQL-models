@@ -12,8 +12,8 @@ describe('demo routes', () => {
     const res = await request(app)
       .post('/api/v1/motorcycles')
       .send({ make: 'Kawasaki', model: 'Ninja-650', horsepower: 310 });
-
+    console.log(res.body);
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ id: '1', make: 'Kawasaki', Mode: 'Ninja-650', horsepower: 310 });
+    expect(res.body).toEqual({ id: '1', make: 'Kawasaki', model: 'Ninja-650', horsepower: 310 });
   });
 });

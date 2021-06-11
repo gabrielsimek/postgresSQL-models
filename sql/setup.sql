@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS motorcyles;
+DROP TABLE IF EXISTS motorcycles;
 
-CREATE TABLE motorcyles (
+CREATE TABLE motorcycles (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   make TEXT,
   model TEXT,
