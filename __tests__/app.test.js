@@ -7,8 +7,8 @@ describe('demo routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
-  
-  it('creates a motorcycle via most', async () => {
+
+  it('creates a motorcycle via post', async () => {
     const res = await request(app)
       .post('/api/v1/motorcycles')
       .send({ make: 'Kawasaki', model: 'Ninja-650', horsepower: 310 });
