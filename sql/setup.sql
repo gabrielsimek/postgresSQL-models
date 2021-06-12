@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS motorcycles;
 DROP TABLE IF EXISTS pokemon;
 DROP TABLE IF EXISTS cats;
+DROP TABLE IF EXISTS people;
 
 CREATE TABLE motorcycles (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -23,4 +24,11 @@ CREATE TABLE cats (
   type TEXT,  
   lives INTEGER,
   is_sidekick BOOLEAN
+);
+
+CREATE TABLE people (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT,
+  age INTEGER,  
+  born_in TEXT
 )

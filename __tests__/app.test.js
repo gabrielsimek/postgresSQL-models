@@ -5,6 +5,7 @@ import app from '../lib/app.js';
 import Motorcycle from '../lib/models/Motorcycle';
 import Pokemon from '../lib/models/Pokemon';
 import Cat from '../lib/models/Cat';
+import Person from '../lib/models/Person';
 describe('/api/v1/motorcycles', () => {
   beforeEach(() => {
     return setup(pool);
@@ -106,7 +107,6 @@ describe('/api/v1/pokemon,', () => {
       pokemon.map(poke => {
         return  Pokemon.insert(poke);
       }));
-    console.log(expected);
     const res = await request(app)
       .get('/api/v1/pokemon');
 
@@ -227,4 +227,63 @@ describe('/api/v1/pokemon', () => {
 
 });
 
+describe('/api/v1/people', () => {
+  beforeEach(() => {
+    return setup(pool);
+  });
 
+  it('inserts a person into /api/v1/people', async () => {
+    const person = { name: 'bob', age: 60, bornIn: 'Portland' };
+
+    const res = await request(app)
+      .post('/api/v1/people')
+      .send(person);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ id: '1', ...person });
+      
+  });
+
+  it('gets a person from /api/v1/people:id', async () => {
+    const person = await Person.insert({ name: 'bob', age: 60, bornIn: 'Portland' });
+    
+    const res = await request(app)
+      .get(`/api/v1/people/${person.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(person);
+  });
+
+  it('gets all people from /api/v1/people', async () => {
+    const people = [{ name: 'bob', age: 60, bornIn: 'Portland' }, { name: 'jane', age: 47, bornIn: 'Los Angeles' }, { name: 'Ricky', age: 27, bornIn: 'Zurich' }, { name: 'Mary', age: 99, bornIn: 'London' }];
+    const allPeople = await Promise.all(
+      people.map(person => Person.insert(person))
+    );
+
+    const res = await request(app)
+      .get('/api/v1/people');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(expect.arrayContaining(allPeople));
+  });
+  it('updates a person from /api/v1/people/:id', async () => {
+    const person = await Person.insert({ name: 'bob', age: 60, bornIn: 'Portland' });
+    person.age = 1000000; 
+    person.name = 'george';
+    const res = await request(app)
+      .put(`/api/v1/people/${person.id}`)
+      .send(person);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(person);
+  });
+  it('deletes a person from /api/v1/people/:id', async () => {
+    const person = await Person.insert({ name: 'bob', age: 60, bornIn: 'Portland' });
+    const res = await request(app)
+      .delete(`/api/v1/people/${person.id}`);
+
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(person);
+  });
+});
