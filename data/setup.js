@@ -1,15 +1,18 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import { promises as fs } from 'fs';
+import path from 'path';
 
-
-export default async (pool) => {
-  const sql = await fs
+export default (pool) => {
+  return fs
     .readFile(
-      'C:/Users/gabri/alchemy/career-track/postgresSQL-models/sql/setup.sql',
+      path.join(
+        path.dirname(new URL(import.meta.url).pathname),
+        '..',
+        'sql',
+        'setup.sql'
+      ),
       {
         encoding: 'utf-8',
       }
-    );
-  return pool.query(sql);
+    )
+    .then((sql) => pool.query(sql));
 };
