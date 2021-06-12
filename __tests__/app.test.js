@@ -6,6 +6,7 @@ import Motorcycle from '../lib/models/Motorcycle';
 import Pokemon from '../lib/models/Pokemon';
 import Cat from '../lib/models/Cat';
 import Person from '../lib/models/Person';
+import City from '../lib/models/City';
 describe('/api/v1/motorcycles', () => {
   beforeEach(() => {
     return setup(pool);
@@ -37,7 +38,6 @@ describe('/api/v1/motorcycles', () => {
     const res = await request(app)
       .get('/api/v1/motorcycles');
       
-
     expect(res.status).toBe(200);
     expect(res.body).toEqual([ninja, cbr, sv]);
   });
@@ -45,7 +45,6 @@ describe('/api/v1/motorcycles', () => {
     const cbr = await  Motorcycle.insert({ make: 'Honda', model: 'CBR-650R', horsepower: 90 });
     cbr.horsepower = 1000;
     
-
     const res = await request(app)
       .put(`/api/v1/motorcycles/${cbr.id}`)
       .send(cbr);
@@ -79,6 +78,7 @@ describe('/api/v1/pokemon,', () => {
       typeTwo: 'NA',
       attack: 55
     };
+
     const res = await request(app)
       .post('/api/v1/pokemon')
       .send(pokemon);
@@ -101,12 +101,13 @@ describe('/api/v1/pokemon,', () => {
     const pika = { name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 };
     const char = { name: 'charmeleon', typeOne: 'fire', typeTwo: 'NA', attack: 64 };
     const bulba = { name: 'bulbasaur', typeOne: 'grass', typeTwo: 'poison', attack: 49 };
-    
     const pokemon = [pika, char, bulba];
+
     const expected = await Promise.all(
       pokemon.map(poke => {
         return  Pokemon.insert(poke);
       }));
+
     const res = await request(app)
       .get('/api/v1/pokemon');
 
@@ -118,6 +119,7 @@ describe('/api/v1/pokemon,', () => {
     const pokemon = await Pokemon.insert({ name: 'pikachu', typeOne: 'electric', typeTwo: 'NA', attack: 55 });
     pokemon.attack = 5000;
     pokemon.typeTwo = 'dragon';
+
     const res = await request(app)
       .put(`/api/v1/pokemon/${pokemon.id}`)
       .send(pokemon);
@@ -194,6 +196,7 @@ describe('/api/v1/pokemon', () => {
     const allCats = await Promise.all(
       cats.map(cat => Cat.insert(cat))
     );
+
     const res = await request(app)
       .get('/api/v1/cats/');
 
@@ -203,7 +206,6 @@ describe('/api/v1/pokemon', () => {
 
   it('updates a cat in /api/v1/cats:id', async () => {
     const cat = await Cat.insert(cats[0]);
-      
     cat.isSidekick = false;
     cat.lives = 25;
   
@@ -285,5 +287,66 @@ describe('/api/v1/people', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(person);
+  });
+});
+describe('/api/v1/cities', () => {
+  beforeEach(() => {
+    return setup(pool);
+  });
+
+  it('inserts a city into /api/v1/cities', async () => {
+    const city = { name: 'Portland', country: 'United States', hasBeach: false };
+
+    const res = await request(app)
+      .post('/api/v1/cities')
+      .send(city);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ id: '1', ...city });
+      
+  });
+
+  it('gets a city from /api/v1/cities:id', async () => {
+    const city = await City.insert({ name: 'Portland', country: 'United States', hasBeach: false });
+    
+    const res = await request(app)
+      .get(`/api/v1/cities/${city.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(city);
+  });
+
+  it('gets all cities from /api/v1/cities', async () => {
+    const cities = [{ name: 'Portland', country: 'United States', hasBeach: false }, { name: 'Bogota', age: 47, bornIn: 'Los Angeles' }, { name: 'Ricky', age: 27, bornIn: 'Zurich' }, { name: 'Mary', age: 99, bornIn: 'London' }];
+
+    const allCities = await Promise.all(
+      cities.map(city => City.insert(city))
+    );
+
+    const res = await request(app)
+      .get('/api/v1/cities');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(expect.arrayContaining(allCities));
+  });
+  it('updates a city at /api/v1/cities/:id', async () => {
+    const city = await City.insert({ name: 'Portland', country: 'United States', hasBeach: false });
+    city.name = 'PDX'; 
+
+    const res = await request(app)
+      .put(`/api/v1/cities/${city.id}`)
+      .send(city);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(city);
+  });
+  it('deletes a city from /api/v1/cities/:id', async () => {
+    const city = await City.insert({ name: 'Portland', country: 'United States', hasBeach: false });
+
+    const res = await request(app)
+      .delete(`/api/v1/cities/${city.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(city);
   });
 });

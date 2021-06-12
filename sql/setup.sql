@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS motorcycles;
 DROP TABLE IF EXISTS pokemon;
 DROP TABLE IF EXISTS cats;
 DROP TABLE IF EXISTS people;
+DROP TABLE IF EXISTS cities;
 
 CREATE TABLE motorcycles (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -31,4 +32,12 @@ CREATE TABLE people (
   name TEXT,
   age INTEGER,  
   born_in TEXT
-)
+);
+
+CREATE TABLE cities (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT,
+  country TEXT,  
+  has_beach BOOLEAN
+);
+
