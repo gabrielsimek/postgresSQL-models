@@ -167,6 +167,7 @@ describe('/api/v1/pokemon', () => {
     lives: 1,
     isSidekick: true
   }];
+
   it('inserts a cat into /api/v1/cats', async () => {
     const felix = cats[0];
 
@@ -178,6 +179,7 @@ describe('/api/v1/pokemon', () => {
     expect(res.body).toEqual({ id: '1', ...felix });
       
   });
+
   it('gets a cat from /api/v1/cats:id', async () => {
     const cat = await Cat.insert(cats[0]);
     
@@ -187,17 +189,18 @@ describe('/api/v1/pokemon', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cat);
   });
+
   it('gets all cats from /api/v1/cats', async () => {
     const allCats = await Promise.all(
       cats.map(cat => Cat.insert(cat))
     );
-    console.log(cats);
     const res = await request(app)
       .get('/api/v1/cats/');
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(expect.arrayContaining(allCats));
   });
+
   it('updates a cat in /api/v1/cats:id', async () => {
     const cat = await Cat.insert(cats[0]);
       
@@ -208,6 +211,16 @@ describe('/api/v1/pokemon', () => {
       .put(`/api/v1/cats/${cat.id}`)
       .send(cat);
   
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(cat);
+  });
+
+  it('deletes a cat from /api/v1/cats:id', async () => {
+    const cat = await Cat.insert(cats[0]);
+    
+    const res = await request(app)
+      .delete(`/api/v1/cats/${cat.id}`);
+
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cat);
   });
