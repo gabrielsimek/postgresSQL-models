@@ -1,5 +1,9 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import { promises as fs } from 'fs';
+
 // import path from 'path';
+
 export default (pool) => {
   return fs
     .readFile(
@@ -13,8 +17,6 @@ export default (pool) => {
 
 
 
-// import dotenv from 'dotenv';
-// dotenv.config();
 // import { promises as fs } from 'fs';
 
 
